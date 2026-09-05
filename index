@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFL Stats Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#2ecc71;--steel:#4a90d9;--gold:#f5c518;--red:#e4433a;
+  --bg:#0a0a0d;--bg2:#111114;--bg3:#17171b;--border:rgba(255,255,255,0.08);
+  --text:#fff;--text-dim:rgba(255,255,255,0.55);--text-muted:rgba(255,255,255,0.25);
+  --nav-bg:rgba(0,0,0,0.92)
+}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:#fff;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:.9rem 2rem;background:var(--nav-bg);backdrop-filter:blur(8px)}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;cursor:pointer;user-select:none}
+.nav-logo span{color:var(--green)}
+.nav-links{display:flex;gap:1.75rem;list-style:none}
+.nav-links a{font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s;cursor:pointer}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+
+.page-hero{padding:5.5rem 2rem 2.5rem;position:relative;overflow:hidden}
+.page-hero-inner{position:relative;max-width:960px;margin:0 auto}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-bottom:1.75rem}
+.stat-card{border-radius:4px;padding:.875rem 1rem;background:var(--bg3);border:0.5px solid var(--border)}
+.stat-lbl{font-size:.57rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:.2rem}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:1.65rem;font-weight:800;line-height:1}
+.stat-sub{font-size:.67rem;color:rgba(255,255,255,.3);margin-top:.2rem}
+
+.lf{font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 11px;border-radius:2px;border:0.5px solid rgba(255,255,255,.15);background:none;cursor:pointer;color:rgba(255,255,255,.35);transition:all .15s}
+.lf:hover{background:rgba(255,255,255,.08)}
+.lf.on{background:var(--green);border-color:var(--green);color:#000}
+
+.rec-tab{font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 14px;border-radius:2px;border:0.5px solid rgba(255,255,255,.15);background:none;cursor:pointer;color:rgba(255,255,255,.35);transition:all .15s}
+.rec-tab:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
+.rec-tab.on{background:var(--green);border-color:var(--green);color:#000}
+
+.rec-row{display:flex;align-items:center;gap:12px;padding:.5rem 6px;border-bottom:0.5px solid rgba(255,255,255,.04);border-radius:3px;transition:background .15s}
+.rec-row:hover{background:rgba(255,255,255,.03)}
+.rec-rank{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:800;width:26px;text-align:right;flex-shrink:0;color:rgba(255,255,255,.2)}
+.rec-rank.t3{color:var(--gold)}
+.rec-name{font-size:.8rem;font-weight:500;color:rgba(255,255,255,.8);width:160px;flex-shrink:0}
+.rec-bar-wrap{flex:1}
+.rec-bar-bg{height:22px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden}
+.rec-bar-fill{height:22px;border-radius:3px;display:flex;align-items:center;padding:0 8px}
+.rec-bar-lbl{font-size:.65rem;font-weight:700;color:rgba(0,0,0,.65);white-space:nowrap}
+.rec-count{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:800;color:var(--green);min-width:32px;text-align:right;flex-shrink:0}
+
+.empty-state{padding:3rem;text-align:center;color:rgba(255,255,255,.18);font-size:.85rem}
+footer{font-size:.6rem;color:rgba(255,255,255,.15);text-align:center;padding:2rem;border-top:0.5px solid rgba(255,255,255,.05);margin-top:2rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">NFL <span>Stats Hub</span></div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" class="active" data-page="home">Home</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════ PAGE: HOME ═══════════ -->
+<div id="page-home" class="page active">
+  <div class="page-hero" style="background:linear-gradient(135deg,#050805,#0d1a10)">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 65% 50%,rgba(46,204,113,.08),transparent 65%)"></div>
+    <div class="page-hero-inner">
+      <div style="font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:.6rem;opacity:.8">NFL · Stats & Records</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900;line-height:1.05;margin-bottom:.5rem">The Complete <span style="color:var(--green)">NFL Database</span></div>
+      <div style="font-size:.82rem;color:rgba(255,255,255,.38);max-width:540px;line-height:1.65">Team and player stats, standings, records, and head-to-head comparisons.</div>
+    </div>
+  </div>
+  <footer>NFL Stats Hub · Data compiled from public records</footer>
+</div>
+
+<script>
+// ── PAGE SWITCHING ──
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.remove('active');});
+  var link = document.querySelector('.nav-links a[data-page="'+id+'"]');
+  if(link) link.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── TEAM COLORS (used for accents throughout) ──
+var TC = {
+  'Cardinals':'#97233F','Falcons':'#A71930','Ravens':'#241773','Bills':'#00338D',
+  'Panthers':'#0085CA','Bears':'#0B162A','Bengals':'#FB4F14','Browns':'#311D00',
+  'Cowboys':'#003594','Broncos':'#FB4F14','Lions':'#0076B6','Packers':'#203731',
+  'Texans':'#03202F','Colts':'#002C5F','Jaguars':'#101820','Chiefs':'#E31837',
+  'Raiders':'#000000','Chargers':'#0080C6','Rams':'#003594','Dolphins':'#008E97',
+  'Vikings':'#4F2683','Patriots':'#002244','Saints':'#D3BC8D','Giants':'#0B2265',
+  'Jets':'#125740','Eagles':'#004C54','Steelers':'#FFB612','49ers':'#AA0000',
+  'Seahawks':'#002244','Buccaneers':'#D50A0A','Titans':'#0C2340','Commanders':'#5A1414'
+};
+</script>
+</body>
+</html>
