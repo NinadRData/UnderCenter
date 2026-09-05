@@ -66,7 +66,59 @@ footer{font-size:.6rem;color:rgba(255,255,255,.15);text-align:center;padding:2re
     <li><a onclick="showPage('home')" class="active" data-page="home">Home</a></li>
   </ul>
 </nav>
+<!-- ═══════════ SHARED: MASTER DATA + DERIVED STATS ═══════════ -->
 
+  <script>
+// ── ERA COLORS ──
+var EC = {'1950s':'#a855f7','1960s':'#3b82f6','1970s':'#f59e0b','1980s':'#ef4444','1990s':'#10b981','2000s':'#f97316','2010s':'#2ec4b6','2020s':'#4fc3f7'};
+function era(y){ y=parseInt(y); if(y>=2020)return'2020s'; if(y>=2010)return'2010s'; if(y>=2000)return'2000s'; if(y>=1990)return'1990s'; if(y>=1980)return'1980s'; if(y>=1970)return'1970s'; if(y>=1960)return'1960s'; return'1950s'; }
+
+// ── GOAT PLAYERS + SCORING (from your data) ──
+var goatPlayers = [ /* ...paste your full goatPlayers array here... */ ];
+function calculateGoatScore(player){ /* ...paste your full calculateGoatScore function here... */ }
+var goatRanked = goatPlayers.map(function(p){
+  var s = calculateGoatScore(p);
+  return Object.assign({}, p, {totalScore:s.total, breakdown:s.breakdown});
+}).sort(function(a,b){ return b.totalScore - a.totalScore; });
+
+// ── SEASON DATA (from your data) ──
+var allSeasons = [ /* ...paste your full allSeasons array here... */ ];
+allSeasons.sort(function(a,b){ return b.score - a.score; });
+
+// ── DERIVED: per-QB aggregate stats built from real data only ──
+function getQBCareerStats(name){
+  var seasons = allSeasons.filter(function(s){ return s.player === name; });
+  var goat = goatPlayers.find(function(p){ return p.name === name; });
+  if(!seasons.length && !goat) return null;
+
+  var avg = function(key){
+    if(!seasons.length) return null;
+    return Math.round(seasons.reduce(function(s,x){return s+x[key];},0)/seasons.length);
+  };
+  var best = seasons.length ? seasons.reduce(function(a,b){ return b.score>a.score?b:a; }) : null;
+  var years = seasons.map(function(s){ return parseInt(s.season); });
+  var mvp1s = seasons.filter(function(s){ return s.mvpFinish==='1st'; }).length;
+  var ydsLeads = seasons.filter(function(s){ return s.ydsLeader; }).length;
+  var tdLeads  = seasons.filter(function(s){ return s.tdLeader; }).length;
+
+  return {
+    name:name, seasons:seasons, seasonCount:seasons.length,
+    careerSpan: years.length ? (Math.min.apply(null,years)+'–'+Math.max.apply(null,years)) : '—',
+    avgAnyaPlus:avg('anyaPlus'), avgCmpPlus:avg('cmpPlus'), avgTdPlus:avg('tdPlus'),
+    avgIntPlus:avg('intPlus'), avgRatePlus:avg('ratePlus'),
+    bestSeason:best, mvp1Count:mvp1s, ydsLeaderCount:ydsLeads, tdLeaderCount:tdLeads,
+    goat: goat || null,
+    goatRank: goat ? goatRanked.findIndex(function(p){return p.name===name;})+1 : null,
+    goatScore: goat ? goatRanked.find(function(p){return p.name===name;}).totalScore : null,
+  };
+}
+
+// Union of every QB name appearing in either dataset — powers dropdowns
+var ALL_QB_NAMES = Array.from(new Set(
+  goatPlayers.map(function(p){return p.name;})
+    .concat(allSeasons.map(function(s){return s.player;}))
+)).sort();
+</script>
 <!-- ═══════════ PAGE: HOME ═══════════ -->
 <div id="page-home" class="page active">
   <div class="page-hero" style="background:linear-gradient(135deg,#050805,#0d1a10)">
@@ -103,5 +155,7 @@ var TC = {
   'Seahawks':'#002244','Buccaneers':'#D50A0A','Titans':'#0C2340','Commanders':'#5A1414'
 };
 </script>
+
+  
 </body>
 </html>
