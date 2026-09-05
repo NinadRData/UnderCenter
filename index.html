@@ -67,7 +67,6 @@ footer{font-size:.6rem;color:rgba(255,255,255,.15);text-align:center;padding:2re
   </ul>
 </nav>
 <!-- ═══════════ SHARED: MASTER DATA + DERIVED STATS ═══════════ -->
-
   <script>
 // ── ERA COLORS ──
 var EC = {'1950s':'#a855f7','1960s':'#3b82f6','1970s':'#f59e0b','1980s':'#ef4444','1990s':'#10b981','2000s':'#f97316','2010s':'#2ec4b6','2020s':'#4fc3f7'};
@@ -119,8 +118,10 @@ var ALL_QB_NAMES = Array.from(new Set(
     .concat(allSeasons.map(function(s){return s.player;}))
 )).sort();
 </script>
+
+  
 <!-- ═══════════ PAGE: HOME ═══════════ -->
-<div id="page-home" class="page active">
+  <div id="page-home" class="page active">
   <div class="page-hero" style="background:linear-gradient(135deg,#050805,#0d1a10)">
     <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 65% 50%,rgba(46,204,113,.08),transparent 65%)"></div>
     <div class="page-hero-inner">
@@ -131,8 +132,32 @@ var ALL_QB_NAMES = Array.from(new Set(
   </div>
   <footer>NFL Stats Hub · Data compiled from public records</footer>
 </div>
+<script>
+
+   <!-- ═══════════ SHARED: NAV + PAGE ROUTER ═══════════ -->
+   <nav>
+  <div class="nav-logo" onclick="showPage('main')">NFL QB <span>Rankings</span></div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('main')" id="nav-main" class="active">Home</a></li>
+    <li><a onclick="showPage('goat')" id="nav-goat">GOAT Rankings</a></li>
+    <li><a onclick="showPage('seasons')" id="nav-seasons">QB Seasons</a></li>
+    <li><a onclick="showPage('qbs')" id="nav-qbs">QBs</a></li>
+    <li><a onclick="showPage('records')" id="nav-records">Records</a></li>
+    <li><a onclick="showPage('compare')" id="nav-compare">Compare</a></li>
+  </ul>
+</nav>
 
 <script>
+function showPage(p){
+  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active');});
+  var el = document.getElementById('page-'+p);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.remove('active');});
+  var navEl = document.getElementById('nav-'+p);
+  if(navEl) navEl.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>  
 // ── PAGE SWITCHING ──
 function showPage(id){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
