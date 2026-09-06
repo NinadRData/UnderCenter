@@ -360,6 +360,62 @@ function renderSeasons(){
 }
 renderSeasons();
 </script>
+
+  //Records Page
+  <div id="page-records" class="page">
+  <div class="page-hero" style="background:linear-gradient(135deg,#0a0800,#1a1000)">
+    <div class="page-hero-inner">
+      <div style="font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold)">Category Leaderboards</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900">Records &amp; <span style="color:var(--gold)">Milestones</span></div>
+    </div>
+  </div>
+  <div style="max-width:960px;margin:0 auto;padding:2rem">
+    <div style="display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap">
+      <button class="rec-tab on" onclick="setRecCat('superBowls',this)">Super Bowls</button>
+      <button class="rec-tab" onclick="setRecCat('regularMVPs',this)">MVPs</button>
+      <button class="rec-tab" onclick="setRecCat('passingYards',this)">Passing Yards</button>
+      <button class="rec-tab" onclick="setRecCat('passingTDs',this)">Passing TDs</button>
+      <button class="rec-tab" onclick="setRecCat('allPros',this)">All-Pros</button>
+      <button class="rec-tab" onclick="setRecCat('mvp1',this)">MVP Seasons (Index)</button>
+    </div>
+    <div id="rec-chart"></div>
+  </div>
+  <footer>NFL QB Rankings · Category leaders from GOAT breakdown</footer>
+</div>
+
+<script>
+var curRecCat = 'superBowls';
+function setRecCat(cat,btn){
+  curRecCat=cat;
+  document.querySelectorAll('#page-records .rec-tab').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderRecords();
+}
+function renderRecords(){
+  var data;
+  if(curRecCat==='mvp1'){
+    // Count of Index-formula #1 MVP-finish seasons per player
+    var counts={};
+    allSeasons.forEach(function(s){ if(s.mvpFinish==='1st') counts[s.player]=(counts[s.player]||0)+1; });
+    data = Object.keys(counts).map(function(n){return {name:n,val:counts[n]};}).sort(function(a,b){return b.val-a.val;});
+  } else {
+    data = goatPlayers.map(function(p){return {name:p.name, val:p[curRecCat]};})
+      .filter(function(d){return d.val>0;})
+      .sort(function(a,b){return b.val-a.val;});
+  }
+  var max = data.length?data[0].val:1;
+  document.getElementById('rec-chart').innerHTML = data.slice(0,15).map(function(d,i){
+    var pct = Math.round(d.val/max*100);
+    return '<div class="rec-row" style="cursor:pointer" onclick="showQBPage(\''+d.name.replace(/'/g,"\\'")+'\')">'+
+      '<span class="rec-rank'+(i<3?' t3':'')+'">&#35;'+(i+1)+'</span>'+
+      '<span class="rec-name">'+d.name+'</span>'+
+      '<div class="rec-bar-wrap"><div class="rec-bar-bg"><div class="rec-bar-fill" style="width:'+pct+'%;background:'+(i<3?'linear-gradient(90deg,#b38600,var(--gold))':'linear-gradient(90deg,#4d3800,#8a6500)')+'"></div></div></div>'+
+      '<span class="rec-count">'+d.val+'</span>'+
+    '</div>';
+  }).join('');
+}
+renderRecords();
+</script>
 // ── PAGE SWITCHING ──
 function showPage(id){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
