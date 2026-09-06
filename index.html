@@ -119,20 +119,60 @@ var ALL_QB_NAMES = Array.from(new Set(
 )).sort();
 </script>
 
-  
-<!-- ═══════════ PAGE: HOME ═══════════ -->
-  <div id="page-home" class="page active">
-  <div class="page-hero" style="background:linear-gradient(135deg,#050805,#0d1a10)">
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 65% 50%,rgba(46,204,113,.08),transparent 65%)"></div>
-    <div class="page-hero-inner">
-      <div style="font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:.6rem;opacity:.8">NFL · Stats & Records</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900;line-height:1.05;margin-bottom:.5rem">The Complete <span style="color:var(--green)">NFL Database</span></div>
-      <div style="font-size:.82rem;color:rgba(255,255,255,.38);max-width:540px;line-height:1.65">Team and player stats, standings, records, and head-to-head comparisons.</div>
+//  Home Page  
+<div id="page-main" class="page active">
+  <div class="hero" style="background:linear-gradient(160deg,#0a1100,#1a2b00)">
+    <div style="max-width:920px;margin:0 auto;position:relative">
+      <div style="font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem">All-Time GOAT Rankings</div>
+      <div id="hero-name" style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1"></div>
+      <div id="hero-score" style="font-size:1.1rem;color:rgba(255,255,255,.5);margin-top:.5rem"></div>
     </div>
   </div>
-  <footer>NFL Stats Hub · Data compiled from public records</footer>
+
+  <div style="padding:1.75rem 2rem 0">
+    <div class="sh"><h2>Top 10 GOAT Rankings</h2><span>By 11-category composite score</span></div>
+    <div id="home-goat-top10"></div>
+  </div>
+
+  <div style="padding:2rem 2rem 0">
+    <div class="sh"><h2>Top 10 Greatest Seasons</h2><span>By Index Stats Formula</span></div>
+    <div id="home-seasons-top10"></div>
+  </div>
+
+  <footer>NFL QB Rankings · Original analytical rankings · GOAT + Seasons formulas</footer>
 </div>
+
 <script>
+(function(){
+  var top = goatRanked[0];
+  document.getElementById('hero-name').textContent = top.name;
+  document.getElementById('hero-score').textContent = 'GOAT Score: '+top.totalScore+' · #1 All-Time';
+
+  var t10 = goatRanked.slice(0,10);
+  var maxScore = t10[0].totalScore;
+  document.getElementById('home-goat-top10').innerHTML = t10.map(function(p,i){
+    var pct = Math.round(p.totalScore/maxScore*100);
+    return '<div class="rec-row" style="cursor:pointer" onclick="showQBPage(\''+p.name.replace(/'/g,"\\'")+'\')">'+
+      '<span class="rec-rank'+(i<3?' t3':'')+'">&#35;'+(i+1)+'</span>'+
+      '<span class="rec-name">'+p.name+'</span>'+
+      '<div class="rec-bar-wrap"><div class="rec-bar-bg"><div class="rec-bar-fill" style="width:'+pct+'%;background:linear-gradient(90deg,#b38600,var(--gold))"><span class="rec-bar-lbl">'+p.superBowls+' SB · '+p.regularMVPs+' MVP</span></div></div></div>'+
+      '<span class="rec-count">'+p.totalScore+'</span>'+
+    '</div>';
+  }).join('');
+
+  var s10 = allSeasons.slice(0,10);
+  var maxS = s10[0].score;
+  document.getElementById('home-seasons-top10').innerHTML = s10.map(function(s,i){
+    var pct = Math.round(s.score/maxS*100);
+    return '<div class="rec-row" style="cursor:pointer" onclick="showQBPage(\''+s.player.replace(/'/g,"\\'")+'\')">'+
+      '<span class="rec-rank'+(i<3?' t3':'')+'">&#35;'+(i+1)+'</span>'+
+      '<span class="rec-name">'+s.player+' <span style="color:rgba(255,255,255,.3);font-size:.65rem">\''+s.season.slice(2)+'</span></span>'+
+      '<div class="rec-bar-wrap"><div class="rec-bar-bg"><div class="rec-bar-fill" style="width:'+pct+'%;background:linear-gradient(90deg,#0277bd,var(--blue))"><span class="rec-bar-lbl">'+s.team+' · MVP: '+s.mvpFinish+'</span></div></div></div>'+
+      '<span class="rec-count">'+s.score.toFixed(1)+'</span>'+
+    '</div>';
+  }).join('');
+})();
+</script>
 
    <!-- ═══════════ SHARED: NAV + PAGE ROUTER ═══════════ -->
    <nav>
