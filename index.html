@@ -270,6 +270,81 @@ function renderGoat(){
 }
 renderGoat();
 </script>
+  //QB Seasons Page
+  <div id="page-seasons" class="page">
+  <div class="page-hero" style="background:linear-gradient(135deg,#000d1a,#001830)">
+    <div class="page-hero-inner">
+      <div style="font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--blue)">Single-Season Performance</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900">Greatest QB <span style="color:var(--blue)">Seasons</span></div>
+      <div style="font-size:.82rem;color:rgba(255,255,255,.38);max-width:540px">Score = (ANY/A+ + Cmp%+ + TD%+ + INT%+ + Rate+) ÷ 2, plus league-leader bonuses.</div>
+    </div>
+  </div>
+  <div style="max-width:960px;margin:0 auto;padding:2rem">
+    <input id="season-search" class="fi" type="text" placeholder="Search player, team, or year..." oninput="renderSeasons()" style="margin-bottom:1rem">
+    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.5rem">
+      <select id="season-player-filter" class="fi" style="width:auto" onchange="renderSeasons()">
+        <option value="all">All Players</option>
+      </select>
+      <div style="display:flex;gap:6px" id="season-era-filters">
+        <button class="lf on" onclick="setSeasonEra('all',this)">All Eras</button>
+        <button class="lf" onclick="setSeasonEra('2020s',this)">2020s</button>
+        <button class="lf" onclick="setSeasonEra('2010s',this)">2010s</button>
+        <button class="lf" onclick="setSeasonEra('2000s',this)">2000s</button>
+        <button class="lf" onclick="setSeasonEra('1990s',this)">1990s</button>
+      </div>
+    </div>
+    <div class="table-hdr">
+      <div class="table-hdr-cell">Player / Season</div>
+      <div class="table-hdr-cell r">Score</div>
+      <div class="table-hdr-cell r">Team</div>
+      <div class="table-hdr-cell r">MVP</div>
+      <div class="table-hdr-cell r">Bonuses</div>
+    </div>
+    <div id="season-list"></div>
+  </div>
+  <footer>NFL QB Rankings · Greatest QB Seasons</footer>
+</div>
+
+<script>
+var seasonEraFilter = 'all';
+(function(){
+  var sel = document.getElementById('season-player-filter');
+  Array.from(new Set(allSeasons.map(function(s){return s.player;}))).sort().forEach(function(p){
+    var o=document.createElement('option'); o.value=p; o.textContent=p; sel.appendChild(o);
+  });
+})();
+function setSeasonEra(e,btn){
+  seasonEraFilter=e;
+  document.querySelectorAll('#season-era-filters .lf').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderSeasons();
+}
+function renderSeasons(){
+  var q=(document.getElementById('season-search').value||'').trim().toLowerCase();
+  var playerF=document.getElementById('season-player-filter').value;
+  var list=allSeasons.filter(function(s){
+    if(q && s.player.toLowerCase().indexOf(q)<0 && s.season.indexOf(q)<0 && s.team.toLowerCase().indexOf(q)<0) return false;
+    if(playerF!=='all' && s.player!==playerF) return false;
+    if(seasonEraFilter!=='all' && era(s.season)!==seasonEraFilter) return false;
+    return true;
+  });
+  document.getElementById('season-list').innerHTML = list.map(function(s){
+    var rank = allSeasons.indexOf(s)+1;
+    var badges = (s.ydsLeader?'<span class="tag-pill tag-yds">YDS</span>':'')+
+                 (s.tdLeader?'<span class="tag-pill tag-td">TD</span>':'')+
+                 (s.rushYdsLeader?'<span class="tag-pill tag-rush">R-YDS</span>':'')+
+                 (s.rushTdLeader?'<span class="tag-pill tag-rush">R-TD</span>':'');
+    return '<div class="table-row" onclick="showQBPage(\''+s.player.replace(/'/g,"\\'")+'\')">'+
+      '<div class="table-title"><span style="color:'+(rank<=3?'var(--gold)':'rgba(255,255,255,.3)')+';font-weight:800;margin-right:8px">'+rank+'</span>'+s.player+' <span style="color:rgba(255,255,255,.3);font-size:.7rem">\''+s.season.slice(2)+'</span></div>'+
+      '<div class="table-cell-r" style="font-weight:700;color:var(--blue)">'+s.score.toFixed(1)+'</div>'+
+      '<div class="table-cell-r table-dim">'+s.team+'</div>'+
+      '<div class="table-cell-r" style="color:'+(s.mvpFinish==='1st'?'var(--gold)':'rgba(255,255,255,.4)')+'">'+s.mvpFinish+'</div>'+
+      '<div class="table-cell-r">'+(badges||'<span class="table-dim">—</span>')+'</div>'+
+    '</div>';
+  }).join('') || '<div class="empty-state">No seasons match.</div>';
+}
+renderSeasons();
+</script>
 // ── PAGE SWITCHING ──
 function showPage(id){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
