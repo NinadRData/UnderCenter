@@ -416,6 +416,164 @@ function renderRecords(){
 }
 renderRecords();
 </script>
+  //QBS Page
+  <div id="page-qbs" class="page">
+  <div class="page-hero" style="background:linear-gradient(135deg,#0d0010,#1a0030)">
+    <div class="page-hero-inner">
+      <div style="font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--purple)">Quarterback Profiles</div>
+      <div id="qb-hero-name" style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900">QB <span style="color:var(--purple)">Profiles</span></div>
+    </div>
+  </div>
+  <div style="max-width:960px;margin:0 auto;padding:2rem">
+    <select id="qbSelect" class="fi" style="margin-bottom:1.5rem" onchange="renderQBProfile()">
+      <option value="">— Choose Quarterback —</option>
+    </select>
+    <div style="display:flex;gap:6px;margin-bottom:1.5rem" id="qb-sort-btns">
+      <button class="sort-btn active" onclick="setQBSort('year',this)">Year</button>
+      <button class="sort-btn" onclick="setQBSort('score',this)">Score</button>
+    </div>
+    <div id="qb-stats-wrap"></div>
+    <div id="qb-chart-wrap"></div>
+    <div id="qb-table-wrap"></div>
+    <div id="qb-empty" class="empty-state">← Choose a quarterback to view their seasons</div>
+  </div>
+  <footer>NFL QB Rankings · QB Profiles compiled from GOAT + Seasons data</footer>
+</div>
+
+<script>
+(function(){
+  var sel = document.getElementById('qbSelect');
+  ALL_QB_NAMES.forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
+})();
+var curQBSort='year';
+function setQBSort(s,btn){
+  curQBSort=s;
+  document.querySelectorAll('#qb-sort-btns .sort-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderQBProfile();
+}
+function renderQBProfile(){
+  var name = document.getElementById('qbSelect').value;
+  var empty=document.getElementById('qb-empty'), statsEl=document.getElementById('qb-stats-wrap'),
+      chartEl=document.getElementById('qb-chart-wrap'), tableEl=document.getElementById('qb-table-wrap');
+  if(!name){ empty.style.display='block'; statsEl.innerHTML=''; chartEl.innerHTML=''; tableEl.innerHTML=''; return; }
+  empty.style.display='none';
+  var stats = getQBCareerStats(name);
+  if(!stats){ empty.style.display='block'; empty.textContent='No data for '+name; return; }
+
+  statsEl.className='stat-grid';
+  statsEl.innerHTML=[
+    {l:'GOAT Rank', v: stats.goatRank?'#'+stats.goatRank:'—', s: stats.goatScore?stats.goatScore+' pts':''},
+    {l:'Seasons Tracked', v: stats.seasonCount, s: stats.careerSpan},
+    {l:'Best Season', v: stats.bestSeason?stats.bestSeason.season:'—', s: stats.bestSeason?stats.bestSeason.score.toFixed(1)+' pts':''},
+    {l:'Avg ANY/A+', v: stats.avgAnyaPlus||'—', s:'across tracked seasons'},
+    {l:'Avg Rate+', v: stats.avgRatePlus||'—', s:'across tracked seasons'},
+    {l:'#1 MVP-Finish Seasons', v: stats.mvp1Count, s:'per Index formula'},
+    {l:'Career Passing Yards', v: stats.goat?stats.goat.passingYards.toLocaleString():'—', s:'per GOAT dataset'},
+    {l:'Career Passing TDs', v: stats.goat?stats.goat.passingTDs:'—', s:'per GOAT dataset'},
+  ].map(function(m){
+    return '<div class="stat-card"><div class="stat-lbl">'+m.l+'</div><div class="stat-val" style="color:var(--purple)">'+m.v+'</div><div class="stat-sub">'+m.s+'</div></div>';
+  }).join('');
+
+  var chartSeasons = stats.seasons.slice().sort(function(a,b){return a.season-b.season;});
+  var maxScore = chartSeasons.length?Math.max.apply(null,chartSeasons.map(function(s){return s.score;})):1;
+  chartEl.innerHTML = chartSeasons.length ? '<div class="chart-box"><div class="chart-lbl">Career Arc · Season Score</div><div class="chart-bars">'+
+    chartSeasons.map(function(s){
+      var h=Math.max(4,Math.round(s.score/maxScore*88));
+      return '<div class="chart-bar-wrap"><div class="chart-bar-tip">'+s.score.toFixed(1)+'</div><div class="chart-bar" style="height:'+h+'px"></div><div class="chart-bar-yr">\''+s.season.slice(2)+'</div></div>';
+    }).join('')+'</div></div>' : '';
+
+  var sorted = stats.seasons.slice();
+  if(curQBSort==='year') sorted.sort(function(a,b){return a.season-b.season;});
+  else sorted.sort(function(a,b){return b.score-a.score;});
+
+  tableEl.innerHTML = sorted.length ? '<div class="table-hdr"><div class="table-hdr-cell">Season</div><div class="table-hdr-cell r">Score</div><div class="table-hdr-cell r">Team</div><div class="table-hdr-cell r">MVP</div></div>'+
+    sorted.map(function(s){
+      return '<div class="table-row" onclick="showQBPage(\''+name.replace(/'/g,"\\'")+'\')">'+
+        '<div class="table-title">'+s.season+'</div>'+
+        '<div class="table-cell-r" style="color:var(--blue);font-weight:600">'+s.score.toFixed(1)+'</div>'+
+        '<div class="table-cell-r table-dim">'+s.team+'</div>'+
+        '<div class="table-cell-r">'+s.mvpFinish+'</div>'+
+      '</div>';
+    }).join('') : '<div class="empty-state">No individual seasons in the Seasons dataset for this QB.</div>';
+}
+</script>
+
+  //compare page
+  <div id="page-compare" class="page">
+  <div class="page-hero" style="background:linear-gradient(135deg,#0d0010,#00101a)">
+    <div class="page-hero-inner">
+      <div style="font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:#f472b6">Head to Head</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900">QB <span style="color:#f472b6">Compare</span></div>
+    </div>
+  </div>
+  <div style="max-width:960px;margin:0 auto;padding:2rem">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:center;margin-bottom:2rem">
+      <div style="background:var(--bg3);border:0.5px solid rgba(244,114,182,.3);border-radius:6px;padding:1rem">
+        <div style="font-size:.57rem;letter-spacing:2px;text-transform:uppercase;color:rgba(244,114,182,.6);margin-bottom:.5rem">QB A</div>
+        <select id="cmpA" class="fi" onchange="renderQBCompare()"><option value="">— Select —</option></select>
+      </div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:900;color:rgba(255,255,255,.15)">VS</div>
+      <div style="background:var(--bg3);border:0.5px solid rgba(79,195,247,.3);border-radius:6px;padding:1rem">
+        <div style="font-size:.57rem;letter-spacing:2px;text-transform:uppercase;color:rgba(79,195,247,.6);margin-bottom:.5rem">QB B</div>
+        <select id="cmpB" class="fi" onchange="renderQBCompare()"><option value="">— Select —</option></select>
+      </div>
+    </div>
+    <div id="cmp-empty" class="empty-state">← Select two quarterbacks to compare</div>
+    <div id="cmp-bars" style="display:none"></div>
+  </div>
+  <footer>NFL QB Rankings · Comparisons based on GOAT + Seasons data</footer>
+</div>
+
+<script>
+(function(){
+  ['cmpA','cmpB'].forEach(function(id){
+    var sel=document.getElementById(id);
+    ALL_QB_NAMES.forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
+  });
+})();
+function cmpBar(label, aVal, bVal, fmt, colA, colB){
+  var max = Math.max(aVal||0, bVal||0) || 1;
+  var pA = Math.round((aVal||0)/max*100), pB = Math.round((bVal||0)/max*100);
+  var wA = (aVal||0)>=(bVal||0), wB=(bVal||0)>=(aVal||0);
+  return '<div style="margin-bottom:1rem">'+
+    '<div style="font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:.4rem">'+label+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 32px 1fr;gap:.5rem;align-items:center">'+
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">'+
+        '<div style="font-size:.85rem;font-weight:700;color:'+(wA?colA:'rgba(255,255,255,.3)')+'">'+fmt(aVal)+'</div>'+
+        '<div style="height:7px;width:'+pA+'%;background:'+colA+(wA?'':'55')+';border-radius:3px 0 0 3px;margin-left:auto"></div>'+
+      '</div>'+
+      '<div style="text-align:center;font-size:.55rem;color:rgba(255,255,255,.18)">vs</div>'+
+      '<div style="display:flex;flex-direction:column;gap:3px">'+
+        '<div style="font-size:.85rem;font-weight:700;color:'+(wB?colB:'rgba(255,255,255,.3)')+'">'+fmt(bVal)+'</div>'+
+        '<div style="height:7px;width:'+pB+'%;background:'+colB+(wB?'':'55')+';border-radius:0 3px 3px 0"></div>'+
+      '</div>'+
+    '</div></div>';
+}
+function renderQBCompare(){
+  var a=document.getElementById('cmpA').value, b=document.getElementById('cmpB').value;
+  var empty=document.getElementById('cmp-empty'), bars=document.getElementById('cmp-bars');
+  if(!a||!b||a===b){ empty.style.display='block'; bars.style.display='none'; empty.textContent=(!a||!b)?'← Select two quarterbacks to compare':'Please select two different quarterbacks.'; return; }
+  empty.style.display='none'; bars.style.display='block';
+  var sA=getQBCareerStats(a), sB=getQBCareerStats(b);
+  var colA='#f472b6', colB='#4fc3f7';
+  var fmtN=function(v){return v!=null?v:'—';};
+  var fmtSc=function(v){return v!=null?v:'—';};
+  bars.innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">'+
+      '<div style="font-size:1rem;font-weight:700;color:'+colA+'">'+a+'</div>'+
+      '<div style="font-size:1rem;font-weight:700;color:'+colB+';text-align:right">'+b+'</div>'+
+    '</div>'+
+    cmpBar('GOAT Score', sA.goatScore, sB.goatScore, fmtSc, colA, colB) +
+    cmpBar('Super Bowls', sA.goat?sA.goat.superBowls:0, sB.goat?sB.goat.superBowls:0, fmtN, colA, colB) +
+    cmpBar('Regular Season MVPs', sA.goat?sA.goat.regularMVPs:0, sB.goat?sB.goat.regularMVPs:0, fmtN, colA, colB) +
+    cmpBar('Career Passing Yards', sA.goat?sA.goat.passingYards:0, sB.goat?sB.goat.passingYards:0, function(v){return v?v.toLocaleString():'—';}, colA, colB) +
+    cmpBar('Career Passing TDs', sA.goat?sA.goat.passingTDs:0, sB.goat?sB.goat.passingTDs:0, fmtN, colA, colB) +
+    cmpBar('Best Season Score', sA.bestSeason?sA.bestSeason.score:0, sB.bestSeason?sB.bestSeason.score:0, function(v){return v?v.toFixed(1):'—';}, colA, colB) +
+    cmpBar('Avg ANY/A+', sA.avgAnyaPlus, sB.avgAnyaPlus, fmtN, colA, colB) +
+    cmpBar('Seasons in Top-72', sA.seasonCount, sB.seasonCount, fmtN, colA, colB);
+}
+</script>
 // ── PAGE SWITCHING ──
 function showPage(id){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
@@ -425,6 +583,7 @@ function showPage(id){
   if(link) link.classList.add('active');
   window.scrollTo(0,0);
 }
+  
 
 // ── TEAM COLORS (used for accents throughout) ──
 var TC = {
