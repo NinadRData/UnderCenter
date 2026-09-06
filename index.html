@@ -144,6 +144,8 @@ var ALL_QB_NAMES = Array.from(new Set(
 
 <script>
 (function(){
+  if (!goatRanked || goatRanked.length === 0) return;
+
   var top = goatRanked[0];
   document.getElementById('hero-name').textContent = top.name;
   document.getElementById('hero-score').textContent = 'GOAT Score: '+top.totalScore+' · #1 All-Time';
