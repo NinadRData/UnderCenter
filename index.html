@@ -200,6 +200,76 @@ function showPage(p){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>  
+
+//GOAT Rankings Page
+  <div id="page-goat" class="page">
+  <div class="page-hero" style="background:linear-gradient(135deg,#0a1100,#1a2b00)">
+    <div class="page-hero-inner">
+      <div style="font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold)">Career Legacy Rankings</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900">GOAT <span style="color:var(--gold)">Rankings</span></div>
+      <div style="font-size:.82rem;color:rgba(255,255,255,.38);max-width:540px">11-category composite: Super Bowls, MVPs, ANY/A, yardage/TD/INT ranks, playoff wins, All-Pros, comebacks, rushing, peak stretch.</div>
+    </div>
+  </div>
+  <div style="max-width:960px;margin:0 auto;padding:2rem">
+    <input id="goat-search" class="fi" type="text" placeholder="Search quarterbacks..." oninput="renderGoat()" style="margin-bottom:1rem">
+    <div style="display:flex;gap:6px;margin-bottom:1.5rem" id="goat-era-filters">
+      <button class="lf on" onclick="setGoatEra('all',this)">All Eras</button>
+      <button class="lf" onclick="setGoatEra('2020s',this)">2020s</button>
+      <button class="lf" onclick="setGoatEra('2010s',this)">2010s</button>
+      <button class="lf" onclick="setGoatEra('2000s',this)">2000s</button>
+      <button class="lf" onclick="setGoatEra('1990s',this)">1990s</button>
+      <button class="lf" onclick="setGoatEra('1980s',this)">1980s or earlier</button>
+    </div>
+    <div class="table-hdr">
+      <div class="table-hdr-cell">Quarterback</div>
+      <div class="table-hdr-cell r">Score</div>
+      <div class="table-hdr-cell r">SBs</div>
+      <div class="table-hdr-cell r">SB MVPs</div>
+      <div class="table-hdr-cell r">MVPs</div>
+      <div class="table-hdr-cell r">Pass TDs</div>
+    </div>
+    <div id="goat-list"></div>
+  </div>
+  <footer>NFL QB Rankings · GOAT Ranking System</footer>
+</div>
+
+<script>
+var goatEraFilter = 'all';
+function setGoatEra(e,btn){
+  goatEraFilter = e;
+  document.querySelectorAll('#goat-era-filters .lf').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderGoat();
+}
+function renderGoat(){
+  var q = (document.getElementById('goat-search').value||'').trim().toLowerCase();
+  var list = goatRanked.filter(function(p){
+    if(q && p.name.toLowerCase().indexOf(q)<0) return false;
+    if(goatEraFilter!=='all'){
+      // approximate era by earliest known season for the player, else include
+      var seasons = allSeasons.filter(function(s){return s.player===p.name;});
+      if(seasons.length){
+        var latest = Math.max.apply(null, seasons.map(function(s){return parseInt(s.season);}));
+        if(goatEraFilter==='1980s'){ if(latest>=1990) return false; }
+        else if(era(latest)!==goatEraFilter) return false;
+      }
+    }
+    return true;
+  });
+  document.getElementById('goat-list').innerHTML = list.map(function(p,i){
+    var rank = goatRanked.indexOf(p)+1;
+    return '<div class="table-row" onclick="showQBPage(\''+p.name.replace(/'/g,"\\'")+'\')">'+
+      '<div class="table-title">'+'<span style="color:'+(rank<=3?'var(--gold)':'rgba(255,255,255,.3)')+';font-weight:800;margin-right:8px">'+rank+'</span>'+p.name+'</div>'+
+      '<div class="table-cell-r" style="font-weight:700;color:var(--gold)">'+p.totalScore+'</div>'+
+      '<div class="table-cell-r">'+p.superBowls+'</div>'+
+      '<div class="table-cell-r">'+p.sbMVPs+'</div>'+
+      '<div class="table-cell-r">'+p.regularMVPs+'</div>'+
+      '<div class="table-cell-r">'+p.passingTDs+'</div>'+
+    '</div>';
+  }).join('') || '<div class="empty-state">No quarterbacks match.</div>';
+}
+renderGoat();
+</script>
 // ── PAGE SWITCHING ──
 function showPage(id){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
