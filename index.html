@@ -82,24 +82,288 @@ footer{font-size:.6rem;color:rgba(255,255,255,.15);text-align:center;padding:2re
   </ul>
 </nav>
 <!-- ═══════════ SHARED: MASTER DATA + DERIVED STATS ═══════════ -->
-  <script>
+<script>
 // ── ERA COLORS ──
 var EC = {'1950s':'#a855f7','1960s':'#3b82f6','1970s':'#f59e0b','1980s':'#ef4444','1990s':'#10b981','2000s':'#f97316','2010s':'#2ec4b6','2020s':'#4fc3f7'};
 function era(y){ y=parseInt(y); if(y>=2020)return'2020s'; if(y>=2010)return'2010s'; if(y>=2000)return'2000s'; if(y>=1990)return'1990s'; if(y>=1980)return'1980s'; if(y>=1970)return'1970s'; if(y>=1960)return'1960s'; return'1950s'; }
 
-// ── GOAT PLAYERS + SCORING (from your data) ──
-var goatPlayers = [ /* ...paste your full goatPlayers array here... */ ];
-function calculateGoatScore(player){ /* ...paste your full calculateGoatScore function here... */ }
+// ── GOAT PLAYERS (your original dataset) ──
+var goatPlayers = [
+  {name: "Tom Brady", superBowls: 7, sbMVPs: 5, regularMVPs: 3, passingYards: 89214, passingTDs: 649, interceptions: 212},
+  {name: "Joe Montana", superBowls: 4, sbMVPs: 3, regularMVPs: 2, passingYards: 40551, passingTDs: 273, interceptions: 139},
+  {name: "Peyton Manning", superBowls: 2, sbMVPs: 1, regularMVPs: 5, passingYards: 71940, passingTDs: 539, interceptions: 251},
+  {name: "Aaron Rodgers", superBowls: 1, sbMVPs: 1, regularMVPs: 4, passingYards: 65812, passingTDs: 513, interceptions: 112},
+  {name: "Johnny Unitas", superBowls: 1, sbMVPs: 0, regularMVPs: 3, passingYards: 40239, passingTDs: 290, interceptions: 253},
+  {name: "Dan Marino", superBowls: 0, sbMVPs: 0, regularMVPs: 1, passingYards: 61361, passingTDs: 420, interceptions: 252},
+  {name: "Brett Favre", superBowls: 1, sbMVPs: 1, regularMVPs: 3, passingYards: 71838, passingTDs: 508, interceptions: 336},
+  {name: "Drew Brees", superBowls: 1, sbMVPs: 1, regularMVPs: 0, passingYards: 80358, passingTDs: 571, interceptions: 243},
+  {name: "John Elway", superBowls: 2, sbMVPs: 1, regularMVPs: 1, passingYards: 51475, passingTDs: 300, interceptions: 226},
+  {name: "Otto Graham", superBowls: 3, sbMVPs: 0, regularMVPs: 2, passingYards: 23584, passingTDs: 174, interceptions: 135},
+  {name: "Steve Young", superBowls: 1, sbMVPs: 1, regularMVPs: 2, passingYards: 33124, passingTDs: 232, interceptions: 107},
+  {name: "Roger Staubach", superBowls: 2, sbMVPs: 2, regularMVPs: 0, passingYards: 22700, passingTDs: 153, interceptions: 109},
+  {name: "Terry Bradshaw", superBowls: 4, sbMVPs: 2, regularMVPs: 1, passingYards: 27989, passingTDs: 212, interceptions: 210},
+  {name: "Fran Tarkenton", superBowls: 0, sbMVPs: 0, regularMVPs: 1, passingYards: 47003, passingTDs: 342, interceptions: 266},
+  {name: "Ben Roethlisberger", superBowls: 2, sbMVPs: 0, regularMVPs: 0, passingYards: 64088, passingTDs: 418, interceptions: 211},
+  {name: "Patrick Mahomes", superBowls: 3, sbMVPs: 3, regularMVPs: 2, passingYards: 28424, passingTDs: 219, interceptions: 63},
+  {name: "Kurt Warner", superBowls: 1, sbMVPs: 2, regularMVPs: 2, passingYards: 32344, passingTDs: 208, interceptions: 128},
+  {name: "Troy Aikman", superBowls: 3, sbMVPs: 1, regularMVPs: 0, passingYards: 32942, passingTDs: 165, interceptions: 141},
+  {name: "Warren Moon", superBowls: 0, sbMVPs: 0, regularMVPs: 0, passingYards: 49325, passingTDs: 291, interceptions: 233},
+  {name: "Philip Rivers", superBowls: 0, sbMVPs: 0, regularMVPs: 0, passingYards: 63440, passingTDs: 421, interceptions: 209},
+  {name: "Bart Starr", superBowls: 5, sbMVPs: 2, regularMVPs: 1, passingYards: 24718, passingTDs: 152, interceptions: 138},
+  {name: "Eli Manning", superBowls: 2, sbMVPs: 2, regularMVPs: 0, passingYards: 57023, passingTDs: 366, interceptions: 244},
+  {name: "Lamar Jackson", superBowls: 0, sbMVPs: 0, regularMVPs: 2, passingYards: 15887, passingTDs: 125, interceptions: 39},
+  {name: "Russell Wilson", superBowls: 1, sbMVPs: 0, regularMVPs: 0, passingYards: 43653, passingTDs: 334, interceptions: 108},
+  {name: "Dan Fouts", superBowls: 0, sbMVPs: 0, regularMVPs: 0, passingYards: 43040, passingTDs: 254, interceptions: 242},
+  {name: "Sonny Jurgensen", superBowls: 0, sbMVPs: 0, regularMVPs: 0, passingYards: 32224, passingTDs: 255, interceptions: 189},
+  {name: "Ken Anderson", superBowls: 0, sbMVPs: 0, regularMVPs: 1, passingYards: 32838, passingTDs: 197, interceptions: 160},
+  {name: "Matt Ryan", superBowls: 0, sbMVPs: 0, regularMVPs: 1, passingYards: 62792, passingTDs: 381, interceptions: 173},
+  {name: "Jim Kelly", superBowls: 0, sbMVPs: 0, regularMVPs: 0, passingYards: 35467, passingTDs: 237, interceptions: 175},
+  {name: "Donovan McNabb", superBowls: 0, sbMVPs: 0, regularMVPs: 0, passingYards: 37276, passingTDs: 234, interceptions: 117},
+  {name: "Matthew Stafford", superBowls: 1, sbMVPs: 0, regularMVPs: 0, passingYards: 55524, passingTDs: 389, interceptions: 174},
+  {name: "Sammy Baugh", superBowls: 2, sbMVPs: 0, regularMVPs: 1, passingYards: 21886, passingTDs: 187, interceptions: 203},
+  {name: "Sid Luckman", superBowls: 4, sbMVPs: 0, regularMVPs: 1, passingYards: 14686, passingTDs: 137, interceptions: 132},
+  {name: "Cam Newton", superBowls: 0, sbMVPs: 0, regularMVPs: 1, passingYards: 35399, passingTDs: 267, interceptions: 138},
+  {name: "Michael Vick", superBowls: 0, sbMVPs: 0, regularMVPs: 0, passingYards: 22464, passingTDs: 133, interceptions: 88},
+  {name: "Randall Cunningham", superBowls: 0, sbMVPs: 0, regularMVPs: 0, passingYards: 29979, passingTDs: 207, interceptions: 134}
+];
+
+// ── GOAT SCORING (your original 11-category formula) ──
+function calculateGoatScore(player) {
+  var breakdown = {
+    superBowls: 0, sbMVPs: 0, regularMVPs: 0, anya: 0, passingYards: 0,
+    passingTDs: 0, playoffWins: 0, allPros: 0, comebacks: 0, rushingYards: 0, peakSeason: 0
+  };
+
+  var sbPoints = {7: 28, 5: 25, 4: 20, 3: 15, 2: 10, 1: 5, 0: 0};
+  breakdown.superBowls = sbPoints[player.superBowls] || 0;
+
+  var sbMVPPoints = {5: 25, 3: 20, 2: 15, 1: 8, 0: 0};
+  breakdown.sbMVPs = sbMVPPoints[player.sbMVPs] || 0;
+
+  var mvpPoints = {5: 25, 4: 22, 3: 18, 2: 12, 1: 6, 0: 0};
+  breakdown.regularMVPs = mvpPoints[player.regularMVPs] || 0;
+
+  var anyaMap = {
+    "Patrick Mahomes": 20, "Lamar Jackson": 19, "Aaron Rodgers": 18,
+    "Peyton Manning": 17, "Drew Brees": 16, "Tom Brady": 15,
+    "Tony Romo": 14, "Philip Rivers": 13, "Dak Prescott": 12,
+    "Jared Goff": 11, "Steve Young": 10, "Kirk Cousins": 9,
+    "Russell Wilson": 8, "Kurt Warner": 7, "Josh Allen": 6,
+    "Joe Montana": 5, "Ben Roethlisberger": 4, "Matt Ryan": 3,
+    "Deshaun Watson": 2, "Dan Marino": 1
+  };
+  breakdown.anya = anyaMap[player.name] || 0;
+
+  var yardsMap = {
+    "Tom Brady": 20, "Drew Brees": 19, "Peyton Manning": 18,
+    "Brett Favre": 17, "Aaron Rodgers": 16, "Ben Roethlisberger": 15,
+    "Philip Rivers": 14, "Matt Ryan": 13, "Dan Marino": 12,
+    "Matthew Stafford": 11, "Eli Manning": 10, "John Elway": 9,
+    "Warren Moon": 8, "Fran Tarkenton": 7, "Russell Wilson": 6,
+    "Joe Flacco": 5, "Carson Palmer": 4, "Vinny Testaverde": 3,
+    "Drew Bledsoe": 2, "Dan Fouts": 1
+  };
+  breakdown.passingYards = yardsMap[player.name] || 0;
+
+  var tdsMap = {
+    "Tom Brady": 20, "Drew Brees": 19, "Peyton Manning": 18,
+    "Aaron Rodgers": 17, "Brett Favre": 16, "Philip Rivers": 15,
+    "Dan Marino": 14, "Ben Roethlisberger": 13, "Matthew Stafford": 12,
+    "Matt Ryan": 11, "Eli Manning": 10, "Russell Wilson": 9,
+    "Fran Tarkenton": 8, "John Elway": 7, "Carson Palmer": 6,
+    "Warren Moon": 5, "Johnny Unitas": 4, "Kirk Cousins": 3,
+    "Vinny Testaverde": 2, "Joe Montana": 1
+  };
+  breakdown.passingTDs = tdsMap[player.name] || 0;
+
+  var playoffMap = {
+    "Tom Brady": 20, "Patrick Mahomes": 19, "Joe Montana": 18,
+    "Terry Bradshaw": 17, "John Elway": 16, "Peyton Manning": 15,
+    "Ben Roethlisberger": 14, "Brett Favre": 13, "Troy Aikman": 12,
+    "Roger Staubach": 11, "Aaron Rodgers": 10, "Joe Flacco": 9,
+    "Bart Starr": 8, "Otto Graham": 7, "Kurt Warner": 6,
+    "Donovan McNabb": 5, "Russell Wilson": 4, "Jim Kelly": 3,
+    "Drew Brees": 2, "Jim Plunkett": 1
+  };
+  breakdown.playoffWins = playoffMap[player.name] || 0;
+
+  var comebackMap = {
+    "Tom Brady": 20, "Peyton Manning": 19, "Ben Roethlisberger": 18,
+    "Matthew Stafford": 17, "Matt Ryan": 16, "Drew Brees": 15,
+    "Johnny Unitas": 14, "Dan Marino": 13, "Russell Wilson": 12,
+    "John Elway": 11, "Philip Rivers": 10, "Ryan Tannehill": 9,
+    "Kirk Cousins": 8, "Andy Dalton": 7, "Warren Moon": 6,
+    "Joe Montana": 5, "Eli Manning": 4, "Derek Carr": 3,
+    "Brett Favre": 2, "Vinny Testaverde": 1
+  };
+  breakdown.comebacks = comebackMap[player.name] || 0;
+
+  var rushingMap = {
+    "Lamar Jackson": 5, "Michael Vick": 4, "Cam Newton": 3,
+    "Russell Wilson": 2, "Randall Cunningham": 1
+  };
+  breakdown.rushingYards = rushingMap[player.name] || 0;
+
+  var allProMap = {
+    "Peyton Manning": 20, "Otto Graham": 20,
+    "Sammy Baugh": 18, "Sid Luckman": 18,
+    "Johnny Unitas": 16, "Dan Marino": 16,
+    "Tom Brady": 14,
+    "Joe Montana": 12, "Steve Young": 12, "Brett Favre": 12,
+    "Aaron Rodgers": 10, "Drew Brees": 10,
+    "Bart Starr": 8, "Dan Fouts": 8, "Sonny Jurgensen": 8
+  };
+  breakdown.allPros = allProMap[player.name] || 0;
+
+  var peakMap = {
+    "Peyton Manning": 20, "Dan Marino": 19, "Tom Brady": 18,
+    "Aaron Rodgers": 17, "Drew Brees": 16, "Steve Young": 15,
+    "Kurt Warner": 14, "Joe Montana": 13, "Patrick Mahomes": 12,
+    "Lamar Jackson": 11, "Brett Favre": 10, "Randall Cunningham": 9,
+    "Roger Staubach": 8, "Daunte Culpepper": 7, "Ken Anderson": 6,
+    "Otto Graham": 5, "Johnny Unitas": 4, "Sonny Jurgensen": 3,
+    "Len Dawson": 2, "Y.A. Tittle": 1
+  };
+  breakdown.peakSeason = peakMap[player.name] || 0;
+
+  var total = Object.values(breakdown).reduce(function(sum, val){ return sum + val; }, 0);
+  return { total: total, breakdown: breakdown };
+}
+
 var goatRanked = goatPlayers.map(function(p){
   var s = calculateGoatScore(p);
   return Object.assign({}, p, {totalScore:s.total, breakdown:s.breakdown});
 }).sort(function(a,b){ return b.totalScore - a.totalScore; });
 
-// ── SEASON DATA (from your data) ──
-var allSeasons = [ /* ...paste your full allSeasons array here... */ ];
+// ── SEASON DATA (your original ~100-season dataset) ──
+var allSeasons = [
+  { rank: 1, score: 369.5, player: "Peyton Manning", season: "2004", team: "Colts", mvpFinish: "1st", anyaPlus: 153, cmpPlus: 127, tdPlus: 168, intPlus: 120, ratePlus: 151, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 2, score: 369.0, player: "Tom Brady", season: "2007", team: "Patriots", mvpFinish: "1st", anyaPlus: 142, cmpPlus: 129, tdPlus: 153, intPlus: 126, ratePlus: 148, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 3, score: 360.5, player: "Dan Marino", season: "1984", team: "Dolphins", mvpFinish: "1st", anyaPlus: 150, cmpPlus: 127, tdPlus: 148, intPlus: 115, ratePlus: 141, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 4, score: 354.0, player: "Steve Young", season: "1994", team: "49ers", mvpFinish: "1st", anyaPlus: 141, cmpPlus: 138, tdPlus: 147, intPlus: 115, ratePlus: 147, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 5, score: 353.0, player: "Peyton Manning", season: "2013", team: "Broncos", mvpFinish: "1st", anyaPlus: 139, cmpPlus: 125, tdPlus: 145, intPlus: 120, ratePlus: 137, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 6, score: 351.5, player: "Aaron Rodgers", season: "2011", team: "Packers", mvpFinish: "1st", anyaPlus: 147, cmpPlus: 127, tdPlus: 153, intPlus: 127, ratePlus: 149, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 7, score: 348.5, player: "Joe Montana", season: "1989", team: "49ers", mvpFinish: "1st", anyaPlus: 141, cmpPlus: 152, tdPlus: 132, intPlus: 123, ratePlus: 149, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 8, score: 347.0, player: "Aaron Rodgers", season: "2020", team: "Packers", mvpFinish: "1st", anyaPlus: 135, cmpPlus: 127, tdPlus: 146, intPlus: 126, ratePlus: 140, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 9, score: 343.0, player: "Steve Young", season: "1992", team: "49ers", mvpFinish: "1st", anyaPlus: 139, cmpPlus: 129, tdPlus: 130, intPlus: 126, ratePlus: 142, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 9, score: 342.5, player: "Lamar Jackson", season: "2024", team: "Ravens", mvpFinish: "2nd", anyaPlus: 147, cmpPlus: 107, tdPlus: 151, intPlus: 127, ratePlus: 143, ydsLeader: false, tdLeader: false, rushYdsLeader: true, rushTdLeader: false },
+  { rank: 10, score: 341.0, player: "Ken Stabler", season: "1976", team: "Raiders", mvpFinish: "1st", anyaPlus: 138, cmpPlus: 142, tdPlus: 148, intPlus: 94, ratePlus: 140, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 10, score: 342.0, player: "Drew Brees", season: "2011", team: "Saints", mvpFinish: "2nd", anyaPlus: 132, cmpPlus: 137, tdPlus: 131, intPlus: 111, ratePlus: 133, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 11, score: 339.5, player: "Daunte Culpepper", season: "2004", team: "Vikings", mvpFinish: "2nd", anyaPlus: 132, cmpPlus: 133, tdPlus: 136, intPlus: 120, ratePlus: 138, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 12, score: 336.0, player: "Kurt Warner", season: "1999", team: "Rams", mvpFinish: "1st", anyaPlus: 134, cmpPlus: 130, tdPlus: 143, intPlus: 109, ratePlus: 136, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 13, score: 335.0, player: "Joe Montana", season: "1987", team: "49ers", mvpFinish: "~3rd", anyaPlus: 127, cmpPlus: 139, tdPlus: 138, intPlus: 110, ratePlus: 136, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 14, score: 333.5, player: "Randall Cunningham", season: "1998", team: "Vikings", mvpFinish: "2nd", anyaPlus: 140, cmpPlus: 140, tdPlus: 141, intPlus: 112, ratePlus: 134, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 14, score: 333.5, player: "Brett Favre", season: "1995", team: "Packers", mvpFinish: "1st", anyaPlus: 130, cmpPlus: 117, tdPlus: 135, intPlus: 115, ratePlus: 130, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 15, score: 334.0, player: "Roger Staubach", season: "1971", team: "Cowboys", mvpFinish: "1st", anyaPlus: 139, cmpPlus: 125, tdPlus: 128, intPlus: 132, ratePlus: 144, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 16, score: 328.5, player: "Bert Jones", season: "1976", team: "Colts", mvpFinish: "1st", anyaPlus: 141, cmpPlus: 124, tdPlus: 127, intPlus: 127, ratePlus: 118, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 14, score: 330.5, player: "Matt Ryan", season: "2016", team: "Falcons", mvpFinish: "1st", anyaPlus: 141, cmpPlus: 128, tdPlus: 133, intPlus: 119, ratePlus: 140, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 15, score: 329.5, player: "Tom Brady", season: "2010", team: "Patriots", mvpFinish: "1st", anyaPlus: 128, cmpPlus: 117, tdPlus: 135, intPlus: 129, ratePlus: 130, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 18, score: 325.0, player: "Ken Anderson", season: "1981", team: "Bengals", mvpFinish: "1st", anyaPlus: 136, cmpPlus: 123, tdPlus: 123, intPlus: 131, ratePlus: 137, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 18, score: 325.0, player: "Ken Stabler", season: "1974", team: "Raiders", mvpFinish: "2nd", anyaPlus: 132, cmpPlus: 117, tdPlus: 137, intPlus: 113, ratePlus: 131, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 16, score: 329.0, player: "Kurt Warner", season: "2001", team: "Rams", mvpFinish: "1st", anyaPlus: 130, cmpPlus: 133, tdPlus: 136, intPlus: 87, ratePlus: 132, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 16, score: 329.0, player: "Drew Brees", season: "2009", team: "Saints", mvpFinish: "2nd", anyaPlus: 131, cmpPlus: 133, tdPlus: 131, intPlus: 111, ratePlus: 132, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 17, score: 325.5, player: "Joe Burrow", season: "2024", team: "Bengals", mvpFinish: "6th", anyaPlus: 118, cmpPlus: 122, tdPlus: 127, intPlus: 117, ratePlus: 127, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 18, score: 325.0, player: "Dan Marino", season: "1986", team: "Dolphins", mvpFinish: "3rd", anyaPlus: 128, cmpPlus: 121, tdPlus: 132, intPlus: 105, ratePlus: 124, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 18, score: 325.0, player: "Drew Brees", season: "2018", team: "Saints", mvpFinish: "2nd", anyaPlus: 131, cmpPlus: 141, tdPlus: 122, intPlus: 122, ratePlus: 134, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 19, score: 324.5, player: "Joe Montana", season: "1984", team: "49ers", mvpFinish: "~3rd", anyaPlus: 138, cmpPlus: 128, tdPlus: 125, intPlus: 124, ratePlus: 134, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 19, score: 324.5, player: "Tom Brady", season: "2016", team: "Patriots", mvpFinish: "2nd", anyaPlus: 138, cmpPlus: 119, tdPlus: 125, intPlus: 134, ratePlus: 133, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 20, score: 323.5, player: "Dan Fouts", season: "1981", team: "Chargers", mvpFinish: "2nd", anyaPlus: 134, cmpPlus: 111, tdPlus: 115, intPlus: 122, ratePlus: 125, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 20, score: 323.5, player: "Steve Young", season: "1993", team: "49ers", mvpFinish: "3rd", anyaPlus: 132, cmpPlus: 130, tdPlus: 133, intPlus: 99, ratePlus: 133, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 21, score: 328.0, player: "Warren Moon", season: "1990", team: "Oilers", mvpFinish: "3rd", anyaPlus: 127, cmpPlus: 121, tdPlus: 119, intPlus: 120, ratePlus: 129, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 21, score: 323.0, player: "Lamar Jackson", season: "2019", team: "Ravens", mvpFinish: "1st", anyaPlus: 125, cmpPlus: 106, tdPlus: 143, intPlus: 114, ratePlus: 128, ydsLeader: false, tdLeader: true, rushYdsLeader: true, rushTdLeader: false },
+  { rank: 22, score: 322.5, player: "Patrick Mahomes", season: "2018", team: "Chiefs", mvpFinish: "1st", anyaPlus: 136, cmpPlus: 109, tdPlus: 144, intPlus: 105, ratePlus: 131, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 22, score: 322.5, player: "Brock Purdy", season: "2023", team: "49ers", mvpFinish: "4th", anyaPlus: 146, cmpPlus: 124, tdPlus: 137, intPlus: 96, ratePlus: 142, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 23, score: 321.0, player: "Roger Staubach", season: "1973", team: "Cowboys", mvpFinish: "~3rd", anyaPlus: 121, cmpPlus: 133, tdPlus: 135, intPlus: 100, ratePlus: 133, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 24, score: 320.0, player: "Jim Kelly", season: "1990", team: "Bills", mvpFinish: "~3rd", anyaPlus: 131, cmpPlus: 126, tdPlus: 134, intPlus: 114, ratePlus: 135, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 25, score: 317.0, player: "Jim Kelly", season: "1991", team: "Bills", mvpFinish: "~3rd", anyaPlus: 123, cmpPlus: 126, tdPlus: 136, intPlus: 100, ratePlus: 129, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 24, score: 312.0, player: "Fran Tarkenton", season: "1973", team: "Vikings", mvpFinish: "~3rd", anyaPlus: 122, cmpPlus: 130, tdPlus: 112, intPlus: 128, ratePlus: 132, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 23, score: 320.0, player: "Steve Young", season: "1997", team: "49ers", mvpFinish: "2nd", anyaPlus: 128, cmpPlus: 142, tdPlus: 114, intPlus: 122, ratePlus: 134, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 24, score: 319.5, player: "Aaron Rodgers", season: "2014", team: "Packers", mvpFinish: "1st", anyaPlus: 135, cmpPlus: 113, tdPlus: 132, intPlus: 127, ratePlus: 132, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 24, score: 319.5, player: "Patrick Mahomes", season: "2022", team: "Chiefs", mvpFinish: "1st", anyaPlus: 129, cmpPlus: 112, tdPlus: 124, intPlus: 110, ratePlus: 124, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 24, score: 319.5, player: "Dak Prescott", season: "2023", team: "Cowboys", mvpFinish: "2nd", anyaPlus: 121, cmpPlus: 125, tdPlus: 126, intPlus: 118, ratePlus: 129, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 25, score: 319.0, player: "Steve Young", season: "1998", team: "49ers", mvpFinish: "2nd", anyaPlus: 125, cmpPlus: 123, tdPlus: 130, intPlus: 112, ratePlus: 128, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 26, score: 318.5, player: "Drew Brees", season: "2004", team: "Chargers", mvpFinish: "~3rd", anyaPlus: 129, cmpPlus: 120, tdPlus: 132, intPlus: 125, ratePlus: 131, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 27, score: 317.5, player: "Peyton Manning", season: "2006", team: "Colts", mvpFinish: "3rd", anyaPlus: 131, cmpPlus: 116, tdPlus: 118, intPlus: 124, ratePlus: 126, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 27, score: 317.5, player: "Rich Gannon", season: "2002", team: "Raiders", mvpFinish: "1st", anyaPlus: 126, cmpPlus: 130, tdPlus: 104, intPlus: 127, ratePlus: 128, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 28, score: 316.5, player: "Philip Rivers", season: "2008", team: "Chargers", mvpFinish: "3rd", anyaPlus: 128, cmpPlus: 114, tdPlus: 134, intPlus: 110, ratePlus: 127, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 29, score: 316.0, player: "Fran Tarkenton", season: "1975", team: "Vikings", mvpFinish: "1st", anyaPlus: 118, cmpPlus: 133, tdPlus: 116, intPlus: 120, ratePlus: 125, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 29, score: 316.5, player: "Ken Anderson", season: "1975", team: "Bengals", mvpFinish: "~3rd", anyaPlus: 129, cmpPlus: 122, tdPlus: 113, intPlus: 122, ratePlus: 127, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 30, score: 315.5, player: "Donovan McNabb", season: "2004", team: "Eagles", mvpFinish: "2nd", anyaPlus: 130, cmpPlus: 115, tdPlus: 130, intPlus: 125, ratePlus: 131, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 30, score: 315.0, player: "Peyton Manning", season: "2003", team: "Colts", mvpFinish: "1st", anyaPlus: 125, cmpPlus: 124, tdPlus: 113, intPlus: 124, ratePlus: 124, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 31, score: 314.5, player: "Brett Favre", season: "1996", team: "Packers", mvpFinish: "1st", anyaPlus: 121, cmpPlus: 109, tdPlus: 141, intPlus: 112, ratePlus: 126, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 32, score: 314.0, player: "Roger Staubach", season: "1979", team: "Cowboys", mvpFinish: "~3rd", anyaPlus: 133, cmpPlus: 111, tdPlus: 121, intPlus: 131, ratePlus: 132, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 33, score: 312.0, player: "Terry Bradshaw", season: "1978", team: "Steelers", mvpFinish: "1st", anyaPlus: 127, cmpPlus: 111, tdPlus: 143, intPlus: 97, ratePlus: 126, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 32, score: 313.0, player: "Brett Favre", season: "2009", team: "Vikings", mvpFinish: "2nd", anyaPlus: 123, cmpPlus: 125, tdPlus: 126, intPlus: 123, ratePlus: 129, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 33, score: 312.0, player: "Peyton Manning", season: "2005", team: "Colts", mvpFinish: "2nd", anyaPlus: 130, cmpPlus: 125, tdPlus: 124, intPlus: 116, ratePlus: 129, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 34, score: 311.0, player: "Aaron Rodgers", season: "2021", team: "Packers", mvpFinish: "1st", anyaPlus: 123, cmpPlus: 117, tdPlus: 124, intPlus: 130, ratePlus: 128, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 35, score: 310.0, player: "Aaron Rodgers", season: "2012", team: "Packers", mvpFinish: "~3rd", anyaPlus: 118, cmpPlus: 123, tdPlus: 130, intPlus: 121, ratePlus: 128, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 36, score: 309.5, player: "Russell Wilson", season: "2015", team: "Seahawks", mvpFinish: "3rd", anyaPlus: 123, cmpPlus: 121, tdPlus: 131, intPlus: 113, ratePlus: 131, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 37, score: 309.0, player: "Dan Marino", season: "1983", team: "Dolphins", mvpFinish: "~3rd", anyaPlus: 131, cmpPlus: 106, tdPlus: 127, intPlus: 129, ratePlus: 125, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 37, score: 309.0, player: "Aaron Rodgers", season: "2016", team: "Packers", mvpFinish: "5th", anyaPlus: 116, cmpPlus: 112, tdPlus: 126, intPlus: 122, ratePlus: 122, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 38, score: 308.5, player: "Brian Sipe", season: "1980", team: "Browns", mvpFinish: "1st", anyaPlus: 127, cmpPlus: 120, tdPlus: 115, intPlus: 126, ratePlus: 129, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 38, score: 307.5, player: "Tom Brady", season: "2011", team: "Patriots", mvpFinish: "~3rd", anyaPlus: 132, cmpPlus: 118, tdPlus: 124, intPlus: 114, ratePlus: 127, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 39, score: 307.0, player: "Steve McNair", season: "2003", team: "Titans", mvpFinish: "1st", anyaPlus: 131, cmpPlus: 110, tdPlus: 123, intPlus: 124, ratePlus: 126, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 40, score: 306.5, player: "Peyton Manning", season: "2012", team: "Broncos", mvpFinish: "2nd", anyaPlus: 125, cmpPlus: 127, tdPlus: 122, intPlus: 114, ratePlus: 125, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 41, score: 306.0, player: "Steve Young", season: "1996", team: "49ers", mvpFinish: "3rd", anyaPlus: 119, cmpPlus: 139, tdPlus: 106, intPlus: 120, ratePlus: 128, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 42, score: 305.5, player: "Fran Tarkenton", season: "1976", team: "Vikings", mvpFinish: "1st", anyaPlus: 125, cmpPlus: 128, tdPlus: 100, intPlus: 133, ratePlus: 125, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 43, score: 304.5, player: "Drew Brees", season: "2008", team: "Saints", mvpFinish: "~3rd", anyaPlus: 122, cmpPlus: 113, tdPlus: 114, intPlus: 104, ratePlus: 116, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 43, score: 304.0, player: "John Elway", season: "1993", team: "Broncos", mvpFinish: "4th", anyaPlus: 117, cmpPlus: 116, tdPlus: 110, intPlus: 124, ratePlus: 121, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 44, score: 303.5, player: "Drew Brees", season: "2006", team: "Saints", mvpFinish: "2nd", anyaPlus: 127, cmpPlus: 114, tdPlus: 108, intPlus: 118, ratePlus: 120, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 44, score: 303.5, player: "Philip Rivers", season: "2009", team: "Chargers", mvpFinish: "3rd", anyaPlus: 131, cmpPlus: 115, tdPlus: 120, intPlus: 115, ratePlus: 126, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 45, score: 303.0, player: "Roger Staubach", season: "1977", team: "Cowboys", mvpFinish: "~3rd", anyaPlus: 124, cmpPlus: 117, tdPlus: 110, intPlus: 130, ratePlus: 125, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 46, score: 302.0, player: "Roger Staubach", season: "1978", team: "Cowboys", mvpFinish: "~3rd", anyaPlus: 129, cmpPlus: 110, tdPlus: 124, intPlus: 115, ratePlus: 126, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 45, score: 302.5, player: "Joe Montana", season: "1983", team: "49ers", mvpFinish: "~3rd", anyaPlus: 122, cmpPlus: 125, tdPlus: 109, intPlus: 125, ratePlus: 124, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 46, score: 301.5, player: "Tom Brady", season: "2015", team: "Patriots", mvpFinish: "~2nd", anyaPlus: 119, cmpPlus: 106, tdPlus: 116, intPlus: 123, ratePlus: 119, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 45, score: 301.5, player: "Lamar Jackson", season: "2023", team: "Ravens", mvpFinish: "1st", anyaPlus: 122, cmpPlus: 114, tdPlus: 115, intPlus: 118, ratePlus: 124, ydsLeader: false, tdLeader: false, rushYdsLeader: true, rushTdLeader: false },
+  { rank: 45, score: 301.5, player: "Drew Brees", season: "2013", team: "Saints", mvpFinish: "~4th", anyaPlus: 121, cmpPlus: 127, tdPlus: 118, intPlus: 114, ratePlus: 123, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 46, score: 300.5, player: "Dan Marino", season: "1985", team: "Dolphins", mvpFinish: "~3rd", anyaPlus: 117, cmpPlus: 113, tdPlus: 113, intPlus: 105, ratePlus: 113, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 46, score: 300.5, player: "Patrick Mahomes", season: "2020", team: "Chiefs", mvpFinish: "3rd", anyaPlus: 128, cmpPlus: 108, tdPlus: 119, intPlus: 124, ratePlus: 122, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 47, score: 300.0, player: "Brett Favre", season: "1997", team: "Packers", mvpFinish: "1st", anyaPlus: 120, cmpPlus: 109, tdPlus: 130, intPlus: 102, ratePlus: 119, ydsLeader: false, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 48, score: 299.5, player: "Aaron Rodgers", season: "2009", team: "Packers", mvpFinish: "~3rd", anyaPlus: 121, cmpPlus: 113, tdPlus: 118, intPlus: 123, ratePlus: 124, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 48, score: 299.5, player: "Drew Brees", season: "2012", team: "Saints", mvpFinish: "~3rd", anyaPlus: 116, cmpPlus: 108, tdPlus: 123, intPlus: 99, ratePlus: 113, ydsLeader: true, tdLeader: true, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 48, score: 299.5, player: "Kurt Warner", season: "2000", team: "Rams", mvpFinish: "~2nd", anyaPlus: 137, cmpPlus: 138, tdPlus: 126, intPlus: 70, ratePlus: 128, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 49, score: 298.0, player: "Joe Montana", season: "1985", team: "49ers", mvpFinish: "~3rd", anyaPlus: 119, cmpPlus: 121, tdPlus: 115, intPlus: 119, ratePlus: 122, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 50, score: 297.0, player: "Tom Brady", season: "2017", team: "Patriots", mvpFinish: "1st", anyaPlus: 119, cmpPlus: 110, tdPlus: 112, intPlus: 116, ratePlus: 117, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 51, score: 296.0, player: "Brett Favre", season: "2001", team: "Packers", mvpFinish: "2nd", anyaPlus: 125, cmpPlus: 109, tdPlus: 132, intPlus: 104, ratePlus: 122, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 52, score: 295.5, player: "Peyton Manning", season: "2009", team: "Colts", mvpFinish: "1st", anyaPlus: 122, cmpPlus: 127, tdPlus: 120, intPlus: 102, ratePlus: 120, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 52, score: 295.5, player: "Josh Allen", season: "2020", team: "Bills", mvpFinish: "2nd", anyaPlus: 121, cmpPlus: 120, tdPlus: 119, intPlus: 110, ratePlus: 121, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 53, score: 295.0, player: "Terry Bradshaw", season: "1975", team: "Steelers", mvpFinish: "~3rd", anyaPlus: 114, cmpPlus: 115, tdPlus: 120, intPlus: 119, ratePlus: 122, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 53, score: 295.0, player: "Dan Fouts", season: "1978", team: "Chargers", mvpFinish: "~3rd", anyaPlus: 122, cmpPlus: 119, tdPlus: 127, intPlus: 99, ratePlus: 123, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 54, score: 295.0, player: "Joe Montana", season: "1981", team: "49ers", mvpFinish: "~3rd", anyaPlus: 119, cmpPlus: 127, tdPlus: 96, intPlus: 126, ratePlus: 122, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 54, score: 295.0, player: "Dan Marino", season: "1987", team: "Dolphins", mvpFinish: "~3rd", anyaPlus: 125, cmpPlus: 114, tdPlus: 118, intPlus: 114, ratePlus: 119, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 55, score: 293.0, player: "Tom Brady", season: "2021", team: "Buccaneers", mvpFinish: "2nd", anyaPlus: 116, cmpPlus: 111, tdPlus: 114, intPlus: 111, ratePlus: 114, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 54, score: 292.5, player: "Steve Young", season: "1995", team: "49ers", mvpFinish: "3rd", anyaPlus: 116, cmpPlus: 130, tdPlus: 107, intPlus: 112, ratePlus: 120, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 55, score: 290.5, player: "Josh Allen", season: "2024", team: "Bills", mvpFinish: "1st", anyaPlus: 127, cmpPlus: 95, tdPlus: 118, intPlus: 120, ratePlus: 116, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: true },
+  { rank: 56, score: 289.5, player: "Jalen Hurts", season: "2022", team: "Eagles", mvpFinish: "2nd", anyaPlus: 119, cmpPlus: 109, tdPlus: 106, intPlus: 122, ratePlus: 118, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: true },
+  { rank: 56, score: 289.5, player: "Tom Brady", season: "2005", team: "Patriots", mvpFinish: "3rd", anyaPlus: 116, cmpPlus: 111, tdPlus: 110, intPlus: 108, ratePlus: 114, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 56, score: 289.5, player: "Tom Brady", season: "2012", team: "Patriots", mvpFinish: "~4th", anyaPlus: 120, cmpPlus: 108, tdPlus: 111, intPlus: 124, ratePlus: 116, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 56, score: 289.5, player: "Brett Favre", season: "2007", team: "Packers", mvpFinish: "2nd", anyaPlus: 121, cmpPlus: 121, tdPlus: 114, intPlus: 104, ratePlus: 119, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 57, score: 288.0, player: "Russell Wilson", season: "2019", team: "Seahawks", mvpFinish: "~3rd", anyaPlus: 115, cmpPlus: 106, tdPlus: 113, intPlus: 123, ratePlus: 119, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 58, score: 287.5, player: "Joe Montana", season: "1990", team: "49ers", mvpFinish: "1st", anyaPlus: 117, cmpPlus: 120, tdPlus: 112, intPlus: 108, ratePlus: 118, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 59, score: 286.0, player: "Dan Marino", season: "1992", team: "Dolphins", mvpFinish: "~3rd", anyaPlus: 117, cmpPlus: 106, tdPlus: 108, intPlus: 109, ratePlus: 112, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 58, score: 286.0, player: "Dan Marino", season: "1995", team: "Dolphins", mvpFinish: "~3rd", anyaPlus: 119, cmpPlus: 120, tdPlus: 114, intPlus: 101, ratePlus: 118, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 58, score: 286.0, player: "Kurt Warner", season: "2008", team: "Cardinals", mvpFinish: "~3rd", anyaPlus: 116, cmpPlus: 120, tdPlus: 110, intPlus: 109, ratePlus: 117, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 59, score: 285.5, player: "Joe Montana", season: "1988", team: "49ers", mvpFinish: "~3rd", anyaPlus: 115, cmpPlus: 116, tdPlus: 104, intPlus: 119, ratePlus: 117, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 59, score: 285.5, player: "Cam Newton", season: "2015", team: "Panthers", mvpFinish: "1st", anyaPlus: 115, cmpPlus: 87, tdPlus: 132, intPlus: 107, ratePlus: 115, ydsLeader: false, tdLeader: false, rushYdsLeader: true, rushTdLeader: true },
+  { rank: 60, score: 284.5, player: "Peyton Manning", season: "2008", team: "Colts", mvpFinish: "1st", anyaPlus: 115, cmpPlus: 119, tdPlus: 109, intPlus: 112, ratePlus: 114, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 61, score: 283.0, player: "Dan Marino", season: "1994", team: "Dolphins", mvpFinish: "~3rd", anyaPlus: 118, cmpPlus: 114, tdPlus: 113, intPlus: 106, ratePlus: 115, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 62, score: 282.0, player: "Dan Marino", season: "1996", team: "Dolphins", mvpFinish: "~3rd", anyaPlus: 122, cmpPlus: 107, tdPlus: 108, intPlus: 112, ratePlus: 115, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 63, score: 281.5, player: "Dan Marino", season: "1988", team: "Dolphins", mvpFinish: "~3rd", anyaPlus: 118, cmpPlus: 111, tdPlus: 105, intPlus: 101, ratePlus: 108, ydsLeader: true, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 64, score: 281.0, player: "Tom Brady", season: "2014", team: "Patriots", mvpFinish: "5th", anyaPlus: 113, cmpPlus: 107, tdPlus: 113, intPlus: 117, ratePlus: 112, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 65, score: 280.0, player: "Dan Marino", season: "1991", team: "Dolphins", mvpFinish: "~3rd", anyaPlus: 117, cmpPlus: 103, tdPlus: 108, intPlus: 119, ratePlus: 113, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 66, score: 277.0, player: "John Elway", season: "1987", team: "Broncos", mvpFinish: "1st", anyaPlus: 124, cmpPlus: 99, tdPlus: 105, intPlus: 114, ratePlus: 112, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 67, score: 274.5, player: "Dan Marino", season: "1990", team: "Dolphins", mvpFinish: "~3rd", anyaPlus: 113, cmpPlus: 105, tdPlus: 100, intPlus: 122, ratePlus: 109, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 68, score: 289.5, player: "John Elway", season: "1998", team: "Broncos", mvpFinish: "~3rd", anyaPlus: 123, cmpPlus: 109, tdPlus: 122, intPlus: 106, ratePlus: 119, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 68, score: 289.5, player: "Fran Tarkenton", season: "1974", team: "Vikings", mvpFinish: "~3rd", anyaPlus: 123, cmpPlus: 114, tdPlus: 106, intPlus: 118, ratePlus: 118, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 69, score: 285.0, player: "John Elway", season: "1996", team: "Broncos", mvpFinish: "~3rd", anyaPlus: 114, cmpPlus: 116, tdPlus: 121, intPlus: 102, ratePlus: 117, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 70, score: 277.0, player: "John Elway", season: "1997", team: "Broncos", mvpFinish: "~3rd", anyaPlus: 116, cmpPlus: 96, tdPlus: 114, intPlus: 115, ratePlus: 113, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 71, score: 276.0, player: "John Elway", season: "1995", team: "Broncos", mvpFinish: "~3rd", anyaPlus: 118, cmpPlus: 101, tdPlus: 111, intPlus: 110, ratePlus: 112, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false },
+  { rank: 72, score: 273.0, player: "Brett Favre", season: "2002", team: "Packers", mvpFinish: "2nd", anyaPlus: 107, cmpPlus: 110, tdPlus: 114, intPlus: 105, ratePlus: 110, ydsLeader: false, tdLeader: false, rushYdsLeader: false, rushTdLeader: false }
+];
+
 allSeasons.sort(function(a,b){ return b.score - a.score; });
 
-// ── DERIVED: per-QB aggregate stats built from real data only ──
+// ── DERIVED PER-QB STATS ──
 function getQBCareerStats(name){
   var seasons = allSeasons.filter(function(s){ return s.player === name; });
   var goat = goatPlayers.find(function(p){ return p.name === name; });
@@ -127,7 +391,6 @@ function getQBCareerStats(name){
   };
 }
 
-// Union of every QB name appearing in either dataset — powers dropdowns
 var ALL_QB_NAMES = Array.from(new Set(
   goatPlayers.map(function(p){return p.name;})
     .concat(allSeasons.map(function(s){return s.player;}))
